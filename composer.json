@@ -1,5 +1,5 @@
 {
-    "name": "evgeni/flarum-ext-new-posts-notice",
+    "name": "ekumanov/flarum-ext-new-posts-notice",
     "description": "Shows a notice when new posts appear while composing a reply",
     "keywords": [
         "flarum",
