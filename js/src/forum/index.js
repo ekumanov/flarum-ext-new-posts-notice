@@ -2,7 +2,7 @@ import app from 'flarum/forum/app';
 import { extend, override } from 'flarum/common/extend';
 import ReplyComposer from 'flarum/forum/components/ReplyComposer';
 
-app.initializers.add('evgeni/flarum-ext-new-posts-notice', () => {
+app.initializers.add('ekumanov/flarum-ext-new-posts-notice', () => {
     // Store the lastPostNumber when the reply editor is opened
     extend(ReplyComposer.prototype, 'oninit', function () {
         const discussion = this.attrs.discussion;
@@ -26,9 +26,10 @@ app.initializers.add('evgeni/flarum-ext-new-posts-notice', () => {
             const newPostsCount = currentLastPostNumber - this.initialLastPostNumber;
 
             if (newPostsCount > 0) {
-                const message = newPostsCount === 1
-                    ? '1 new reply was added while you were writing.\n\nOK → Post your reply anyway\nCancel → Read it first (your draft stays open)'
-                    : `${newPostsCount} new replies were added while you were writing.\n\nOK → Post your reply anyway\nCancel → Read them first (your draft stays open)`;
+                const raw = newPostsCount === 1
+                    ? app.translator.trans('ekumanov-new-posts-notice.forum.new_posts_single')
+                    : app.translator.trans('ekumanov-new-posts-notice.forum.new_posts_plural', { count: newPostsCount });
+                const message = Array.isArray(raw) ? raw.join('') : raw;
 
                 if (confirm(message)) {
                     this.initialLastPostNumber = currentLastPostNumber;
