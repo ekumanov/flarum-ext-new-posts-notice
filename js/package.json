@@ -1,5 +1,5 @@
 {
-    "name": "@evgeni/flarum-ext-new-posts-notice",
+    "name": "@ekumanov/flarum-ext-new-posts-notice",
     "version": "0.1.0",
     "private": true,
     "devDependencies": {

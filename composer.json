@@ -15,13 +15,13 @@
     },
     "authors": [
         {
-            "name": "Evgeni",
-            "email": "evgeni@example.com"
+            "name": "ekumanov",
+            "email": "ekumanov@users.noreply.github.com"
         }
     ],
     "autoload": {
         "psr-4": {
-            "Evgeni\\NewPostsNotice\\": "src/"
+            "Ekumanov\\NewPostsNotice\\": "src/"
         }
     },
     "extra": {
