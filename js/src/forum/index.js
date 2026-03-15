@@ -3,70 +3,53 @@ import { extend, override } from 'flarum/common/extend';
 import ReplyComposer from 'flarum/forum/components/ReplyComposer';
 
 app.initializers.add('evgeni/flarum-ext-new-posts-notice', () => {
-    // Store the lastPostNumber when the composer is initialized
+    // Store the lastPostNumber when the reply editor is opened
     extend(ReplyComposer.prototype, 'oninit', function () {
         const discussion = this.attrs.discussion;
         if (discussion) {
             this.initialLastPostNumber = discussion.lastPostNumber();
-            console.log('[NewPostsNotice] Composer opened. Initial lastPostNumber:', this.initialLastPostNumber);
         }
     });
 
-    // Override the onsubmit method to check for new posts before submitting
+    // Check for new posts before submitting
     override(ReplyComposer.prototype, 'onsubmit', async function (original) {
         const discussion = this.attrs.discussion;
 
         if (!discussion || !this.initialLastPostNumber) {
-            // No discussion context, just submit normally
             return original();
         }
 
         try {
-            // Refresh the discussion data from the API
+            // Fetch latest discussion state from API
             const freshDiscussion = await app.store.find('discussions', discussion.id());
             const currentLastPostNumber = freshDiscussion.lastPostNumber();
             const newPostsCount = currentLastPostNumber - this.initialLastPostNumber;
 
-            console.log('[NewPostsNotice] Checking for new posts:', {
-                initial: this.initialLastPostNumber,
-                current: currentLastPostNumber,
-                newPosts: newPostsCount
-            });
-
             if (newPostsCount > 0) {
-                // New posts appeared while user was typing
                 const message = newPostsCount === 1
-                    ? '1 new post appeared while you were writing.\n\nDo you want to review it first?\n\nClick OK to post anyway, or Cancel to review.'
-                    : `${newPostsCount} new posts appeared while you were writing.\n\nDo you want to review them first?\n\nClick OK to post anyway, or Cancel to review.`;
+                    ? '1 new reply was added while you were writing.\n\nOK → Post your reply anyway\nCancel → Read it first (your draft stays open)'
+                    : `${newPostsCount} new replies were added while you were writing.\n\nOK → Post your reply anyway\nCancel → Read them first (your draft stays open)`;
 
                 if (confirm(message)) {
-                    // User chose to post anyway - update the initial count and submit
                     this.initialLastPostNumber = currentLastPostNumber;
                     return original();
                 } else {
-                    // User chose to review - scroll to new posts
-                    // Find the first new post and scroll to it
-                    const firstNewPostNumber = this.initialLastPostNumber + 1;
-
-                    // Update initial count so next submit won't show the same warning
+                    // User wants to read new posts first
                     this.initialLastPostNumber = currentLastPostNumber;
 
-                    // Navigate to the new posts
-                    const nearParam = firstNewPostNumber;
-                    m.route.set(app.route('discussion', { id: discussion.id() + '-' + discussion.slug() }), { near: nearParam });
+                    // Scroll to first new post
+                    const firstNewPostNumber = this.initialLastPostNumber - newPostsCount + 1;
+                    m.route.set(app.route('discussion', { id: discussion.id() + '-' + discussion.slug() }), { near: firstNewPostNumber });
 
-                    // Minimize composer so user can read
+                    // Minimize so user can read
                     app.composer.minimize();
-
                     return;
                 }
-            } else {
-                // No new posts, submit normally
-                return original();
             }
+
+            return original();
         } catch (error) {
-            console.error('[NewPostsNotice] Error checking for new posts:', error);
-            // On error, just submit normally
+            // On error, submit normally
             return original();
         }
     });
