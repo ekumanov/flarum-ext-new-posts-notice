@@ -1,0 +1,37 @@
+{
+    "name": "evgeni/flarum-ext-new-posts-notice",
+    "description": "Shows a notice when new posts appear while composing a reply",
+    "keywords": [
+        "flarum",
+        "extension",
+        "new-posts",
+        "notice",
+        "composer"
+    ],
+    "type": "flarum-extension",
+    "license": "MIT",
+    "require": {
+        "flarum/core": "^1.8.0"
+    },
+    "authors": [
+        {
+            "name": "Evgeni",
+            "email": "evgeni@example.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Evgeni\\NewPostsNotice\\": "src/"
+        }
+    },
+    "extra": {
+        "flarum-extension": {
+            "title": "New Posts Notice",
+            "icon": {
+                "name": "fas fa-bell",
+                "backgroundColor": "#e74c3c",
+                "color": "#fff"
+            }
+        }
+    }
+}
