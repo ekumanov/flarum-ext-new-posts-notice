@@ -33,3 +33,24 @@ Translations are in `locale/en.yml` under the `ekumanov-new-posts-notice.forum` 
 - Use `override` to replace existing component methods entirely
 - Access global Flarum objects via `app.store`, `app.translator`, `app.history`, `app.composer`
 - The `flarum-webpack-config` preset handles Babel, externals (Mithril, Flarum core modules), and output paths automatically
+
+### Flarum 2.0: lazy-loaded components
+
+`ReplyComposer` lives in a lazy webpack chunk in Flarum 2.0. The `main` branch uses `flarum.reg.onLoad('core', 'forum/components/ReplyComposer', callback)` instead of a top-level import. Do **not** revert this to a top-level import — it will throw `TypeError: Cannot read properties of undefined (reading 'prototype')` at boot.
+
+## Branch / Docker testing rules
+
+Two branches, two Flarum versions:
+
+| Branch | Flarum | webpack-config |
+|--------|--------|----------------|
+| `main` | 2.0+   | v3 |
+| `1.x`  | 1.8    | v2 |
+
+**When switching branches for a build, always run `npm ci` (not `npm install`) from the `js/` directory.** `node_modules` is not tracked by git, so after a branch switch the installed `flarum-webpack-config` version may be wrong. `npm ci` reinstalls exactly what the branch's `package-lock.json` specifies. Building with the wrong config version produces `flarum.reg.get(...)` calls in the dist that crash on the incompatible Flarum version.
+
+**When testing in the Flarum 1.8 Docker (`localhost:80`), both extensions mounted in that container must be on their `1.x` branches:**
+- `flarum-ext-new-posts-notice` → `1.x`
+- `flarum-ext-inline-audio` → `1.x`
+
+If either is on `main`, its dist will contain `flarum.reg.get(...)` calls that crash the entire JS bundle in Flarum 1.8, silently breaking all extensions.
