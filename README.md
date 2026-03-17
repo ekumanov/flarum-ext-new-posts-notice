@@ -64,7 +64,11 @@ Once enabled, the extension works automatically:
 
 ### Compatibility
 
-- Flarum 1.8+
+| Branch | Flarum version |
+|--------|---------------|
+| `main` (this) | Flarum 2.0+ |
+| [`1.x`](https://github.com/ekumanov/flarum-ext-new-posts-notice/tree/1.x) | Flarum 1.8 |
+
 - Works alongside the Pusher extension
 - Works with private discussions (Byobu)
 
