@@ -76,6 +76,7 @@ Once enabled, the extension works automatically:
 
 ### Links
 
+* [Discuss](https://discuss.flarum.org/d/38914-new-posts-notice-warn-users-when-new-replies-appear-while-composing)
 * [GitHub](https://github.com/ekumanov/flarum-ext-new-posts-notice)
 * [Packagist](https://packagist.org/packages/ekumanov/flarum-ext-new-posts-notice)
 * [Report Issues](https://github.com/ekumanov/flarum-ext-new-posts-notice/issues)
